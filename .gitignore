@@ -1,0 +1,44 @@
+# === Qt build files ===
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.autosave
+
+# CMake build files (если используешь CMake)
+CMakeLists.txt.user
+
+# Qt Creator project files
+*.creator.*
+*.creator
+
+# Build folders
+build-*/
+bin/
+debug/
+release/
+*.o
+*.obj
+*.so
+*.dll
+*.exe
+*.dylib
+*.app
+
+# moc, rcc, ui generated files
+moc_*.cpp
+moc_*.h
+ui_*.h
+qrc_*.cpp
+
+# Logs
+*.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Other IDEs
+.vscode/
+.idea/
+*.swp
