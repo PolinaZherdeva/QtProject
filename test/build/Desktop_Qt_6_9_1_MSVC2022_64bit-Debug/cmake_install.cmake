@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/Lenovo/Documents/qt/test
+# Install script for directory: D:/QtProject/test
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -33,7 +33,7 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "C:/Users/Lenovo/Documents/qt/test/build/Desktop_Qt_6_9_1_MSVC2022_64bit-Debug/test.exe")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "D:/QtProject/test/build/Desktop_Qt_6_9_1_MSVC2022_64bit-Debug/test.exe")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -51,6 +51,6 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-  file(WRITE "C:/Users/Lenovo/Documents/qt/test/build/Desktop_Qt_6_9_1_MSVC2022_64bit-Debug/${CMAKE_INSTALL_MANIFEST}"
+  file(WRITE "D:/QtProject/test/build/Desktop_Qt_6_9_1_MSVC2022_64bit-Debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
