@@ -1,0 +1,12 @@
+#ifndef POWERSUPPLY_GLOBAL_H
+#define POWERSUPPLY_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(POWERSUPPLY_LIBRARY)
+#define POWERSUPPLY_EXPORT Q_DECL_EXPORT
+#else
+#define POWERSUPPLY_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // POWERSUPPLY_GLOBAL_H
