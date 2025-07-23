@@ -44,52 +44,17 @@ void TestbenchDualChannelAmplifier::Multimeter() const {
 
 
 //---------------------------------- МЕТОДЫ ДЛЯ АНАЛИЗА S2P ФАЙЛОВ
-
-// Проверка файла на разницу в 1 дБ (указанное значение) на списке частот main_freq
-void TestbenchDualChannelAmplifier::CheckForCompressionPoint(const string& filePath, int power, bool& found) {
-    Sleep(100); //?
-    ifstream inputFile(filePath);
-    if (!inputFile.is_open()) cout << "Error opening file with s2p parameters" << endl;
-
-    string line;
-    Sleep(700); // ?
-    while (getline(inputFile, line)) {
-        if (line.empty() || line[0] == '!' || line[0] == '#') continue;
-        stringstream ss(line);
-        double freq, s11_re, s11_im, s21_re, s21_im;
-        if (ss >> freq >> s11_re >> s11_im >> s21_re >> s21_im) {
-            if (freq == main_freq) {
-                if (power == start_power) start_amp = s21_re;
-                else {m
-                    double diff = start_amp - s21_re;
-                    cout << "Power: " << power << " Diff: " << diff << endl;
-
-                    if ((diff >= amp_difference) && diff < best_diff) {m
-                        best_diff = diff;
-                        best_pow = power;
-                        amp_diff_file = filePath;
-                        amp_diff_power = power;
-                        found = true;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    inputFile.close();
-}
-
-
+// ? каие параметры указывать в методах
 void  TestbenchDualChannelAmplifier::SaveFileWithCompressionPoint(string amp_diff_file, string outpFile, double freq_min, double freq_max, string powerSup) {
 
-
-    // --- теперь читаем выбранный файл и записываем данные в новый файл
+    // ---  читаем выбранный файл и записываем данные в новый файл
     ifstream selectedFile(amp_diff_file);
-    //ofstream outputFile("D:\\kalls\\result.txt");
+    // формирование файл для записи результата
     string fullpath = outpFile + "result_" + powerSup + "_V.csv";
-    ofstream outputFile(fullpath); // файл для сохранения данных
 
+    ofstream outputFile(fullpath); // открытие файла для записи
 
+    // запись заголовка csv файла
     outputFile << "Frequency_GHz" << ";" << "Pin_dBm" << ";" << "Pout_dBm" << ";" << "S21_dB" << endl;
 
     if (selectedFile.is_open()) {
@@ -127,5 +92,53 @@ void  TestbenchDualChannelAmplifier::SaveFileWithCompressionPoint(string amp_dif
     }
     else {
         cerr << "Error: can not open result file" << endl;
+    }
+}
+
+
+// Список частот сделать параметром класса
+// const vector<double>& freqs
+// amp_difference также передаётся в параметры класса
+
+// основная логика нахождения файлов с точкой компрессии
+void  VNA_Measurement::FindFileWithCompressionPoint(string voltage_supply, string voltage_offset, string current_offset) {
+
+    // копируем список частот
+    vector<double> remaining_freqs = freqs;
+    // найдена ли хотя бы одна точка компрессии
+    bool found_any = false;
+
+    for (int power = start_power; power <= stop_power; ++power) {
+        // метод для измерения s2p параметров из vna dll
+        // сохранение пути к измеренному файлу
+        string filePath = SaveS2PFile(power, voltage_supply, voltage_offset, current_offset);
+
+        // используем итератор, чтобы можно было удалять элементы вектора
+        for (auto it = remaining_freqs.begin(); it != remaining_freqs.end(); ) {
+            // нашли ли точку компрессии на частоте
+            bool found = false;
+            // копируем текущую частоту в main_freq
+            double main_freq = *it;
+
+            CheckForCompressionPoint(filePath, power, main_freq, amp_difference, found);
+
+            if (found) {
+                cout << "Compression file: " << amp_diff_file << " at power " << amp_diff_power << " dBm\n";
+                SaveFileWithCompressionPoint(amp_diff_file, result_path, start_freq, stop_freq, voltage_supply);
+                it = remaining_freqs.erase(it);  // удаляем частоту из вектора, переходим к следующей частоте, цикл продолжается
+                found_any = true;
+            } else {
+                ++it; // переходим к следующей частоте, если точка не найдена
+            }
+        }
+
+        if (remaining_freqs.empty()) {
+            cout << "Compression points found for all frequencies.\n";
+            break;
+        }
+    }
+
+    if (!found_any) {
+        cout << "Could not find compression points for any frequency.\n";
     }
 }
